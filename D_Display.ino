@@ -91,10 +91,8 @@ byte	litBlade;
 
 #define	SIMPLECOLOR	1
 
-void	updateDisplay()
+void	renderBackdrop(byte *pixelsR, byte *pixelsG, byte *pixelsB)
 {
-	LIMIT_FREQUENCY(displayLimiter, 40)
-	
 	byte	i;
 #if POWERSAVER
 	byte	litNow;
@@ -143,7 +141,6 @@ void	updateDisplay()
 #endif
 #endif
 
-	cli();
 	//	Status pixels:
 	byte *hpx = (byte *)hiltValues;
 
@@ -154,10 +151,10 @@ void	updateDisplay()
 			byte	h = *--hpx;
 			byte	l = *--hpx;
 			swap(l);
-			sendByte(bitDoubler[l & 0xF]);	//	G
-			sendByte(bitDoubler[h & 0xF]);	//	R
+			*pixelsG++ = (bitDoubler[l & 0xF]);	//	G
+			*pixelsR++ = (bitDoubler[h & 0xF]);	//	R
 			swap(l);
-			sendByte(bitDoubler[l & 0xF]);	//	B
+			*pixelsB++ = (bitDoubler[l & 0xF]);	//	B
 		}
 	#endif
 
@@ -166,10 +163,10 @@ void	updateDisplay()
 		byte	l = *hpx++;
 		byte	h = *hpx++;
 		swap(l);
-		sendByte(bitDoubler[l & 0xF]);
-		sendByte(bitDoubler[h & 0xF]);
+		*pixelsG++ = (bitDoubler[l & 0xF]);
+		*pixelsR++ = (bitDoubler[h & 0xF]);
 		swap(l);
-		sendByte(bitDoubler[l & 0xF]);
+		*pixelsB++ = (bitDoubler[l & 0xF]);
 	}
 
 
@@ -178,9 +175,9 @@ void	updateDisplay()
 		while(run--)
 		{	int		v = *bv++;
 			int		x;
-			TINTCOLOR(x, v, gTint); sendByte(x >> dimmer);
-			TINTCOLOR(x, v, rTint); sendByte(x >> dimmer);
-			TINTCOLOR(x, v, bTint); sendByte(x >> dimmer);
+			TINTCOLOR(x, v, gTint); *pixelsG++ = (x >> dimmer);
+			TINTCOLOR(x, v, rTint); *pixelsR++ = (x >> dimmer);
+			TINTCOLOR(x, v, bTint); *pixelsB++ = (x >> dimmer);
 		}
 		
 		READ_RLE(run,rle);
@@ -198,9 +195,6 @@ void	updateDisplay()
 
 		pixels -= run;
 	} while(run);
-
-	sei();
-	show();
 }
 
 void bladeSetup()
@@ -241,4 +235,3 @@ void bladeSetup()
 	sprintln(ledCorrection);
 #endif
 }
-

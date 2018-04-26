@@ -27,7 +27,7 @@ Notes:
 
 // Arbitrary version numbers to check if EEPROM is either not configured yet or out of date:
 #define	VERSION_SIGNATURE_0	0xBA
-#define	VERSION_SIGNATURE_1	0x55
+#define	VERSION_SIGNATURE_1	0x56
 
 enum
 {
@@ -109,16 +109,23 @@ byte	gSettings[kEEPROMUsed];
 
 #define kHiltPixels       3
 #define kHiltPixelMirrors 1
-#define kBladePixels     92
 //#define kBladePixels      20
 #endif
+
+#define	kTotalPixels	(kBladePixels + kHiltPixelMirrors * kHiltPixels + kHiltPixels)
 
 //  Ratio matters, so for instance 47k & 470k would be 1 and 10 and two 47kΩ resistors are 1 and 1:
 #define vmResistor1 1
 #define vmResistor2 1
 #define	VOLTAGE_RATIO (kRefVoltage * (vmResistor1 + vmResistor2) / vmResistor1)
 
-const int neoPixels = kBladePixels + kHiltPixels * (1+kHiltPixelMirrors);
+
+const int statusPixels = kHiltPixels * (1+kHiltPixelMirrors);
+const int tipPixels = 4;
+const int stripCount = 3;
+const int stripLen = 26;
+const int kBladePixels = stripCount * stripLen + tipPixels;
+const int neoPixels = kBladePixels + statusPixels;
 
 
 /*

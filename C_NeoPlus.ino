@@ -1,5 +1,5 @@
 /*
- * NeoPixel control software adapted from josh.com
+ * NeoPixel control software from josh.com
  * More info at http://wp.josh.com/2014/05/11/ws2812-neopixels-made-easy/
  */
 

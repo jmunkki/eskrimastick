@@ -113,7 +113,7 @@ const byte blueMenus[] PROGMEM =
 {
 	kBlueIndex, 4, 
 		kGreenIndex,	0, 2, kEEHiltDisplayMode,	//	Done
-		kBlueIndex,		1, 2, kEESheathMode,		//	Done
+		kBlueIndex,		2, 2, kEESheathMode,		//	Done
 		kPurpleIndex,	1, 2, kEEHiltSheathMode,	//	Done
 		//kBlueIndex,	0, 1, kEERotaryMode,		//	TODO
 		//kCyanIndex,	0, 1, kEEButtonMode,		//	TODO

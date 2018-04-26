@@ -21,7 +21,7 @@ void readVoltMeter()
 
 //	else
 	{
-		reedTriggered = digitalRead(tipswitch);
+		reedTriggered = !digitalRead(tipswitch);
 	}
 }
 

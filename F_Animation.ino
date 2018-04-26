@@ -226,9 +226,31 @@ void	bladePeakingMode()
 	*p = kBladePixels;
 
 	bladeRLE = colorChangeRLE;
-	updateDisplay();
 }
 
+void renderSparkle(byte *red, byte *green, byte *blue)
+{
+	if(reedTriggered)
+	{
+		for(byte k=0;k<3;k++)
+		{
+			int	i = random(kBladePixels);
+			int j = random(kBladePixels);
+			
+			if(j>i)
+				i = j;
+			red[i] = 128;
+			green[i] = 128;
+			blue[i] = 255;
+		}
+		
+		int i = random(statusPixels,statusPixels+tipPixels);
+		{	red[i] = 255;
+			green[i] = 255;
+			blue[i] = 255;
+		}
+	}
+}
 /*
 const byte	singleBlade[] PROGMEM = {
 	kBladePixels,							//	Default color
@@ -237,17 +259,24 @@ const byte	singleBlade[] PROGMEM = {
 
 void	updateDisplayUsingScheme()
 {
+	LIMIT_FREQUENCY(displayLimiter, 40)
+	
+	byte	red[kTotalPixels];
+	byte	green[kTotalPixels];
+	byte	blue[kTotalPixels];
+	
 	targetLevel = NORMAL_TARGETLEVEL;
-	if(reedTriggered)
+	
+	//if(reedTriggered)
 	{
 		byte	sheathMode = gSettings[kEESheathMode];
 		
 		if(sheathMode == 0)
 			targetLevel = SHEATHED_TARGETLEVEL;
-		else if(sheathMode == 1)
-			targetLevel = DIM_TARGETLEVEL;
+		//else if(sheathMode == 1)
+		//	targetLevel = DIM_TARGETLEVEL;
 	}
-
+	
 	tint = BLADETINT(gSettings[kEETint]);
 	byte	simpleScheme[] = {
 	//	COLORCHANGE(BLADETINT(gSettings[kEESecondaryTint])), 2,
@@ -265,14 +294,50 @@ void	updateDisplayUsingScheme()
 		default:
 		case 0:		//	Single color scheme
 			initialRun = kBladePixels;
-			updateDisplay();
 			break;
 		case 1:		//	Dual color scheme
 			initialRun = gSettings[kEEPrimaryLength];
-			updateDisplay();
 			break;
 		case 2:
 			bladePeakingMode();
 			break;
 	}
+	
+	renderBackdrop(red, green, blue);
+	renderSparkle(red, green, blue);
+	startNeopixels();
+	
+	int	cursor = 0;
+	for(int i=0;i<statusPixels;i++)
+	{	sendPixel(red[cursor], green[cursor], blue[cursor]);
+		cursor++;
+	}
+
+	cursor += tipPixels;
+	for(int i=0;i<stripLen;i++)
+	{	sendPixel(red[cursor], green[cursor], blue[cursor]);
+		cursor+=3;
+	}	
+
+	cursor -= 2;
+	for(int i=0;i<stripLen;i++)
+	{	sendPixel(red[cursor], green[cursor], blue[cursor]);
+		cursor-=3;
+	}	
+
+	cursor += 2;
+	for(int i=0;i<stripLen;i++)
+	{	sendPixel(red[cursor], green[cursor], blue[cursor]);
+		cursor+=3;
+	}	
+
+	cursor = statusPixels;
+	for(int i=0;i<tipPixels;i++)
+	{	sendPixel(red[cursor], green[cursor], blue[cursor]);
+		cursor++;
+	}
+	
+	//for(int i=0;i<kTotalPixels;i++)
+	//	sendPixel(red[i], green[i], blue[i]);
+	endNeopixels();
 }
