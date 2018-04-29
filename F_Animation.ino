@@ -181,7 +181,7 @@ void	showIdleHilt()
 #define	PEAKING_CHANGES		48
 #define	PEAKING_TRESHOLD	220
 
-void	bladePeakingMode()
+void	bladePeakingMode(byte *red, byte *green, byte *blue)
 {
 	byte	colorChangeRLE[(PEAKING_CHANGES+1)*3];
 	int		colors[] = { 0xF000 | BLADETINT(gSettings[kEETint]),
@@ -226,6 +226,7 @@ void	bladePeakingMode()
 	*p = kBladePixels;
 
 	bladeRLE = colorChangeRLE;
+	renderBackdrop(red, green, blue);
 }
 
 void renderSparkle(byte *red, byte *green, byte *blue)
@@ -294,16 +295,17 @@ void	updateDisplayUsingScheme()
 		default:
 		case 0:		//	Single color scheme
 			initialRun = kBladePixels;
+			renderBackdrop(red, green, blue);
 			break;
 		case 1:		//	Dual color scheme
 			initialRun = gSettings[kEEPrimaryLength];
+			renderBackdrop(red, green, blue);
 			break;
 		case 2:
-			bladePeakingMode();
+			bladePeakingMode(red, green, blue);
 			break;
 	}
 	
-	renderBackdrop(red, green, blue);
 	renderSparkle(red, green, blue);
 	startNeopixels();
 	
